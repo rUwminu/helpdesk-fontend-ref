@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import { useContext } from 'react'
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom'
+import { UserContext } from './context/UserContext/UserContext'
+import tw from 'twin.macro'
+import styled from 'styled-components'
+
+// Pages
+import { Login, Home } from './Pages/index'
+import { Topbar, Sidebar } from './Components/index'
 
 function App() {
+  const { user } = useContext(UserContext)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Router>
+      <Switch>
+        <Route path='/login' exact>
+          {user ? <Redirect to='/' /> : <Login />}
+        </Route>
+        {user ? (
+          <>
+            <Topbar />
+            <BodyContainer>
+              <Sidebar />
+              <Route path='/' exact>
+                <Home />
+              </Route>
+            </BodyContainer>
+          </>
+        ) : (
+          <Redirect to='/login' />
+        )}
+      </Switch>
+    </Router>
+  )
 }
 
-export default App;
+const BodyContainer = styled.div`
+  ${tw`
+    h-screen
+    w-screen
+    flex
+    bg-gray-100
+  `}
+`
+
+export default App
